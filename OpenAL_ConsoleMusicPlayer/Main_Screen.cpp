@@ -6,6 +6,8 @@
 #include <map>
 #include <WINDOWS.h>
 #include "stdio.h"
+#include <random>
+
 
 #include "Main_Screen.hpp"
 #include "SoundPlayer.hpp"
@@ -15,6 +17,11 @@
 //コンストラクタ
 Main_Screen::Main_Screen()
 {
+    // 乱数を初期化
+
+    mt.seed(rnd());
+    std::uniform_int_distribution<> Rand(0, 100);
+
 
     /* コンポーネント　関係 */
     mText = new Debug_Log("Main_Screen.txt");   //デバッグ用　テキスト出力
@@ -22,7 +29,7 @@ Main_Screen::Main_Screen()
     mInput = new KeyInput();                    //キー入力
     mSound = new SoundPlayer();                 //サウンド再生
 
-//  std::string path = "M"; //ルートパス
+    
     std::string path = "Music"; //ルートパス
         try {
             for (const auto& fp : std::filesystem::directory_iterator::directory_iterator(path))
@@ -62,9 +69,9 @@ void Main_Screen::Input()
     if (mInput->getKeyDown(KeyCode::DOWN_KEY) && true)
     {
         mPos_y++;
-        if (mPos_y > mPlayList_Name.size() - 1)
+        if (mPos_y > (int)mPlayList_Name.size() - 1)
         {
-            mPos_y = mPlayList_Name.size() - 1;
+            mPos_y = (int)mPlayList_Name.size() - 1;
         }
 
     }else if (mInput->getKeyDown(KeyCode::UP_KEY) && true)
@@ -137,6 +144,10 @@ void Main_Screen::Input()
 //更新
 void Main_Screen::Update()
 {
+    
+    mText->Write("%d\n",Rand(mt));
+
+
     Input();    //入力更新    
 
     if (EnterKey == true)
@@ -164,6 +175,8 @@ void Main_Screen::Update()
             mSound->Stop();
 
             mNowPlay_Path = mPlayList_Name.at(mPos_y);  //パスを設定
+            mPlayName = std::filesystem::path(mNowPlay_Path).filename().string();
+
 
             mSound->InputFile(mNowPlay_Path.c_str());
             mSound->Play();
@@ -203,7 +216,7 @@ void Main_Screen::Loop()
 }
 // --------------------------     ------------------------------------
 
-#define PLAY_LIST_POS_Y 20//プレイリストを表示するy座標
+#define PLAY_LIST_POS_Y 10//プレイリストを表示するy座標
 
 //描画更新
 void Main_Screen::GenerateOutput()
@@ -218,14 +231,25 @@ void Main_Screen::GenerateOutput()
         mWindow->Draw(0, 0, "ファイルまたはディレクトリが一つもありません。");
     }
     else {
-    
-        const std::filesystem::path fp = std::filesystem::path(mPlayPath);
-        
-        std::filesystem::path ff = fp.filename();
-
-        mWindow->Draw(0,0,"あああ　%ls",ff.c_str());
+        // メイン画面
 
 
+
+
+        if (Rand(mt) % 2 == 0) {
+            mText->Write("あああ\n");
+            mWindow->Draw(0, 0, "Sound Player ♪:  %s", mPlayName.c_str());
+        }
+        else {
+            mText->Write("いいい\n");
+
+            mWindow->Draw(0, 0, "Sound Player  :  %s", mPlayName.c_str());
+        }
+
+
+
+        // プレイリスト
+        mWindow->Draw(PLAY_LIST_POS_Y - 2, 0, " --- PLAY LIST  --- ");
         for (int i = 0; i < mPlayList_Name.size(); i++)
         {
             std::string str = std::filesystem::path(mPlayList_Name.at(i)).filename().string();

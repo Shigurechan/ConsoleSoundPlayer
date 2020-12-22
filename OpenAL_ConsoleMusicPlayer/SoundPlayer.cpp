@@ -123,6 +123,7 @@ void SoundPlayer::InputFile(const char* fp)
 void SoundPlayer::Play()
 {
   
+
    // printf("Ç†Ç†Ç†Ç†Ç†\n");
     // ---------------------- çƒê∂Å@----------------------
     
