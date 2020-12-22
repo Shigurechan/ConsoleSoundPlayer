@@ -1,0 +1,30 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+key ディレクトリ名　(アルバム名)
+value カーソルの位置 ( > )
+
+*/
+std::map<std::string,int> mIndexDir_path;
+
+
+
+
+/*
+
+key 参照番号　(今どこまでいったか先か前かを判定できる int 型で参照)
+
+*/
+std::map<int ,std::string> mHistoryDir_path;
