@@ -77,6 +77,32 @@ void Main_Screen::Input()
         }
     }
 
+
+    // 左キー 戻るキー
+    else if (mInput->getKeyDown(KeyCode::LEFT_KEY) && true)
+    {
+
+       
+        const std::filesystem::path fp = std::filesystem::path(mPlayPath);
+        std::filesystem::path ff = fp.parent_path();
+        mPlayPath = ff.string();
+
+        mText->Write("%s\n",mPlayPath.c_str());
+
+        if (strcmp(mPlayPath.c_str(),"\0") != 0) {
+          //  if (mPlayPath.c_str() != "\0") {
+            mPos_y = 0;
+            mPlayList_Name.clear();
+
+
+            for (const auto& fp : std::filesystem::directory_iterator::directory_iterator(mPlayPath))
+            {
+                mPlayList_Name.push_back(fp.path().string());
+            }
+        }
+    }
+
+
     //決定ボタン
     else if ( (mInput->getKeyDown(KeyCode::ENTER_KEY) == true) && (EnterKey == false)  )
     {
@@ -94,11 +120,6 @@ void Main_Screen::Input()
             mSound->Play();
         }
     }
-
-
-
-
-
 
 
 
@@ -136,15 +157,15 @@ void Main_Screen::Update()
                 mPlayList_Name.push_back(fp.path().string());
             }
 
-            mPos_y = 0;
+            mPos_y = 0; //カーソルを一番上に戻す
         }
         else
         {
             mSound->Stop();
 
-            mPlayPath = mPlayList_Name.at(mPos_y);  //パスを設定
+            mNowPlay_Path = mPlayList_Name.at(mPos_y);  //パスを設定
 
-            mSound->InputFile(mPlayPath.c_str());
+            mSound->InputFile(mNowPlay_Path.c_str());
             mSound->Play();
         }
         
@@ -197,7 +218,14 @@ void Main_Screen::GenerateOutput()
         mWindow->Draw(0, 0, "ファイルまたはディレクトリが一つもありません。");
     }
     else {
-       
+    
+        const std::filesystem::path fp = std::filesystem::path(mPlayPath);
+        
+        std::filesystem::path ff = fp.filename();
+
+        mWindow->Draw(0,0,"あああ　%ls",ff.c_str());
+
+
         for (int i = 0; i < mPlayList_Name.size(); i++)
         {
             std::string str = std::filesystem::path(mPlayList_Name.at(i)).filename().string();

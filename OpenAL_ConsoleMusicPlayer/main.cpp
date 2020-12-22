@@ -24,6 +24,8 @@ void GenerateOutput()
 
 int main() {
 
+    setlocale(LC_ALL, " "); //スケールを指定
+
     
     ALCdevice* const device = alcOpenDevice(nullptr);               //デバイス
     ALCcontext* const context = alcCreateContext(device, nullptr);  //コンテキスト    
